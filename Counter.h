@@ -26,7 +26,6 @@ struct t_data{
     off_t foff;
     struct dirent *entry;
     pthread_t threads[NTHREADS];
-//    long NTHREADS;
 } ;
 
 void catcher(int sig);
