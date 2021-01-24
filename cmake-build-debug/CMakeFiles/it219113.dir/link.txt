@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/it219113.dir/it219113.c.o  -o it219113  -pthread 

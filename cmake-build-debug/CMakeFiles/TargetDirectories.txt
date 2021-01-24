@@ -1,0 +1,3 @@
+/media/thanos/LinuxWinFiles/HUA/3rd Semaster/Operating systems/assigments/it219113/cmake-build-debug/CMakeFiles/edit_cache.dir
+/media/thanos/LinuxWinFiles/HUA/3rd Semaster/Operating systems/assigments/it219113/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/media/thanos/LinuxWinFiles/HUA/3rd Semaster/Operating systems/assigments/it219113/cmake-build-debug/CMakeFiles/it219113.dir
