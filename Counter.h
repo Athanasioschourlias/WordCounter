@@ -22,10 +22,9 @@
 
 typedef struct t_data data;
 struct t_data{
-    int tnum,ffd,dfd;
+    int tnum,dfd;
     off_t foff;
     struct dirent *entry;
-    pthread_t threads[NTHREADS];
 } ;
 
 void catcher(int sig);
@@ -33,5 +32,9 @@ void catcher(int sig);
 int isASCII(int ffd, off_t foff);
 
 void * thread_func (void *th);
+
+void printK();
+
+void printO();
 
 #endif //IT219113_COUNTER_H

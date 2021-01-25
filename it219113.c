@@ -3,7 +3,6 @@
 int sum = 0;
 pthread_mutex_t mymutex = PTHREAD_MUTEX_INITIALIZER;
 
-
 int main(int argc, char *argv[]) {
 
     signal(SIGINT, catcher);
@@ -11,27 +10,25 @@ int main(int argc, char *argv[]) {
 
     DIR *folder;
     struct dirent *entry;
-    int files = 0, dfd;
-    struct stat statbuf;
-    int count = 0, ffd;
-    off_t foff, culoff;
-    unsigned char buf;
+    int files = 0, dfd,ffd;
+    off_t foff;
     FILE *fptr;
 
     if (argc < 2) {
-        //current directory.
-        if ((folder = fdopendir((dfd = open(".", O_RDONLY)))) == NULL) {
+        //current directory+error checking.
+        if ((folder = fdopendir((dfd = open("./", O_RDONLY)))) == NULL) {
             fprintf(stderr, "Cannot open directory\n");
             exit(1);
         }
     } else {
+        //current directory+error checking.
         if ((folder = fdopendir((dfd = open(argv[1], O_RDONLY)))) == NULL) {
             fprintf(stderr, "Cannot open directory\n");
             exit(1);
         }
     }
 
-
+    //error checking.
     if (folder == NULL) {
         fprintf(stderr, "Error : Failed to open common_file - %s\n", strerror(errno));
         return (1);
@@ -58,74 +55,71 @@ int main(int argc, char *argv[]) {
             abort();
         }
 
-        //checking if it is an executable file.
-        if (fstat(ffd, &statbuf) == 0 && !(statbuf.st_mode & S_IXUSR)) {
-
-            //Find how many characters are in this file.
-            if ((foff = lseek(ffd, 0, SEEK_END)) == -1) {
-                printf("There was an error");
-                abort();
-            }
-
-            if (foff == 0) {
-                //is the file does not have any characters inside it.
-                printf("This file %s contains no words.\n", entry->d_name);
-                continue;
-            }
-
-            if ((isASCII(ffd, foff)) != 0) {
-                printf("The file with name: %s and size of %ld is not an ascii file", entry->d_name, foff);
-            }
-
-            //reset the "needle" at the start of the file because we moved it with the last if.
-            lseek(ffd, 0, SEEK_SET);
-
-            if (fork() == 0) {
-                pthread_t threads[NTHREADS];
-
-                data th[NTHREADS];
-
-                for (int i = 0; i < NTHREADS; ++i) {
-                    th[i].tnum = i;//keeping the threads number
-                    th[i].foff = foff;//kepping the total count of chars in the file.
-                    th[i].ffd = ffd;//keeping the file descripton in order to open if latter a any thread with the right offset.
-                    th[i].entry = entry;
-                    th[i].dfd =dfd;
-
-                    pthread_create(&threads[i], NULL, &thread_func, (void *) &th[i]);
-
-                }
-
-                //Only the children will execute this part of code.
-                //every child is beeing created with the same dfd and an updated entry variable.
-                for (int i = 0; i < NTHREADS; ++i) {
-                    pthread_join(threads[i], NULL);
-                }
-
-
-                lseek(ffd, foff-1,SEEK_SET);
-                read(ffd, &buf, 1);
-
-                // opening file in writing mode
-                fptr = fopen("../output.txt", "w");
-
-                // exiting program
-                if (fptr == NULL) {
-                    printf("Error!");
-                    exit(1);
-                }
-
-                if (buf == '.' || buf == ' ' || buf == '\n' || buf == '\t' || buf == '/' || buf == ',' ) {
-                    fprintf(fptr,"%d, %s, %d\n", getpid(), entry->d_name, --sum);
-                } else {
-                    fprintf(fptr,"%d, %s, %d\n", getpid(), entry->d_name, sum);
-                }
-                exit(0);
-            }
-
+        //Find how many characters are in this file.
+        if ((foff = lseek(ffd, 0, SEEK_END)) == -1) {
+            printf("There was an error");
+            abort();
         }
 
+        if (foff == 0) {
+            //is the file does not have any characters inside it.
+            printf("This file %s contains no words.\n", entry->d_name);
+            continue;
+        }
+
+        //Checking if a file contains a non ASCII character and if it does we skip it.
+        if ((isASCII(ffd, foff)) != 0) {
+            printf("The file with name: %s and size of %ld is not an ascii file", entry->d_name, foff);
+            continue;
+        }
+
+        if (fork() == 0) {
+
+            pthread_t threads[NTHREADS];
+
+            //creating a table of strucs in order to pass it as an argument at the threads function and have all the necessary information.
+            data th[NTHREADS];
+
+            for (int i = 0; i < NTHREADS; ++i) {
+
+                th[i].tnum = i;//keeping the threads number
+                th[i].foff = foff;//kepping the total count of chars in the file.
+                th[i].entry = entry;/*Passing the name of the file in order to know for which file we need to open the new
+                file discriptor for*/
+                th[i].dfd = dfd; //Passing the Directory file discriptor in order to open a new file descriptor for every thread.
+
+                //Creating the threads we will use to count the words from this file.(STATIC NUMBER FROM THE HEADER FILE)
+                pthread_create(&threads[i], NULL, &thread_func, (void *) &th[i]);
+
+            }
+
+            //Only the children will execute this part of code.
+            //every child is beeing created with the same dfd and an updated entry variable.
+            for (int i = 0; i < NTHREADS; ++i) {
+                pthread_join(threads[i], NULL);
+            }
+
+            // opening file in writing mode
+            fptr = fopen("../output.txt", "a");
+
+            // exiting program if an error occurs
+            if (fptr == NULL) {
+                printf("Error!");
+                exit(1);
+            }
+
+            fprintf(fptr, "%d, %s, %d\n", getpid(), entry->d_name, sum);
+            exit(0);
+        }
+        close(ffd);
     }
+
+    //printing a more visual message to the use that everything went good and the program finished
+    printO();
+    printf("\n");
+    printK();
+    printf("\n..............Im done!!!!..............");
+
     //Parent is waiting for all of his children to finish
     for (int i = 0; i <= files; i++) // loop will run files times how many files we counted inside the loop
         wait(NULL);
@@ -133,59 +127,85 @@ int main(int argc, char *argv[]) {
 
 }
 
-void * thread_func(void *th) {
+void *thread_func(void *th) {
 
     /* seting each threads stack with the right variables from the process is beeing called from */
     data *td = th;
 
     int limit = td->tnum;
-    int partialsum = 0,ffd,bc = 0;
-    unsigned char buff[100],c;
+    int partialsum = 0, tfd, s = 1;
+    unsigned char c, prev = ' ';
+
+    //opening the file to read with openat(), same as open
+    if ((tfd = openat(td->dfd, td->entry->d_name, O_RDONLY)) == -1) {
+        perror(td->entry->d_name);
+        abort();
+    }
+
+    //potitioning the "needle" at the right place every time.
+    lseek(tfd, limit * (td->foff / NTHREADS), SEEK_SET);
+
+    /*if we are at the last thread we will read till the end, we will read how many characters are left if the division was not perfect.
+    We need to POINT out that even if the "last" thread will be executed first  that does not matter since every thread has it's own file
+     decriptor and sets the offset where it needs to read and the "needle" will not be moved by an other thread, and this is a guarantee*/
+     if (td->tnum == NTHREADS - 1 && td->foff % NTHREADS != 0) {
+
+        for (long i = limit * (td->foff / NTHREADS);
+             i < (limit + 1) * (td->foff / NTHREADS) + (td->foff % NTHREADS); i++) {
 
 
-    if (td->tnum == NTHREADS - 1 && td->foff%NTHREADS != 0){
+            read(tfd, &c, 1);
 
-        pthread_mutex_lock(&mymutex);
-        for (long i = limit * (td->foff / NTHREADS); i < (limit + 1) * (td->foff / NTHREADS) + (td->foff%NTHREADS); i++){
-
-            read(td->ffd, &c, 1);
-            if(c != ' ' && c != '\t' && c != '\n' && c != '.' && c != ',' && c != ':' && c != '/'){
-                buff[bc++] = c;
-            } else {
-                for (int j = 0; j < 100; j++){
-                    buff[i] = 0;
-                }
-                partialsum += 1;
+            /* Here we impleement a logic in which we move step by step but we keep the previous letters in order to know
+             * if this is the end of a sentece so we will do a +1 in our word counter(partialsum) or we are still reading a word
+             * also we try to cach cases in wich for example we have a (.) and then for the sake of the argument, 3 white
+             * spaces these wont be 3 words we have to count zero in this case.*/
+            if (c == ' ' || c == '\t' || c == '\n' || c == '.' || c == ',') {
+                s++;/*keeping a count of the spaces or tab or new line in order not to get confiused at the final
+                            if in the case there are two spaces back to back in between two words */
             }
-
+            if ((c == ' ' || c == '\t' || c == '\n' || c == '.' || c == ',') &&
+                (prev != ' ' && prev != '\t' && prev != '\n') &&
+                (s < 2)) {
+                ++partialsum;
+            }
+            //making the current letter the previous for the next one we will read.
+            if (c != ' ' && c != '\t' && c != '\n') {
+                prev = c;
+                s = 0;
+            }
         }
-        pthread_mutex_unlock(&mymutex);
     } else {
-        pthread_mutex_lock(&mymutex);
+
         for (long i = limit * (td->foff / NTHREADS); i < (limit + 1) * (td->foff / NTHREADS); i++) {
 
-            read(td->ffd, &c, 1);
-            if(c != ' ' && c != '\t' && c != '\n' && c != '.' && c != ',' && c != ':' && c != '/'){
-                buff[bc++] = c;
-            } else {
-                for (int j = 0; j < 100; j++){
-                    buff[i] = 0;
-                }
-                partialsum += 1;
-            }
+            read(tfd, &c, 1);
 
+            /* Here we impleement a logic in which we move step by step but we keep the previous letters in order to know
+             * if this is the end of a sentece so we will do a +1 in our word counter(partialsum) or we are still reading a word
+             * also we try to cach cases in wich for example we have a (.) and then for the sake of the argument, 3 white
+             * spaces these wont be 3 words we have to count zero in this case.*/
+            if (c == ' ' || c == '\t' || c == '\n' || c == '.' || c == ',') {
+                s++;/*keeping a count of the spaces or tab or new line in order not to get confiused at the final
+                            if in the case there are two spaces back to back in between two words */
+            }
+            if ((c == ' ' || c == '\t' || c == '\n' || c == '.' || c == ',') &&
+                (prev != ' ' && prev != '\t' && prev != '\n') &&
+                (s < 2)) {
+                ++partialsum;
+            }
+            if (c != ' ' && c != '\t' && c != '\n') {
+                prev = c;
+                s = 0;
+            }
         }
-        pthread_mutex_unlock(&mymutex);
     }
 
     pthread_mutex_lock(&mymutex);
-
     sum += partialsum;
-
     pthread_mutex_unlock(&mymutex);
 
     /* Print the local copy of the argument */
-//    printf("Im the thread with number: %d\n", td->tnum);
     pthread_exit(NULL);
 }
 
@@ -221,5 +241,49 @@ void catcher(int sig) {
             break;
 
 
+    }
+}
+
+// Function to print the pattern of 'K'
+void printK()
+{
+    int i, j, half = 8 / 2, dummy = half;
+    for (i = 0; i < 8; i++) {
+        printf("*");
+        for (j = 0; j <= half; j++) {
+            if (j == abs(dummy))
+                printf("*");
+            else
+                printf(" ");
+        }
+        printf("\n");
+        dummy--;
+    }
+}
+
+// Function to print the pattern of 'O'
+void printO()
+{
+    int i, j, space = (8 / 3);
+    int width = 8 / 2 + 8 / 5 + space + space;
+    for (i = 0; i < 8; i++) {
+        for (j = 0; j <= width; j++) {
+            if (j == width - abs(space) || j == abs(space))
+                printf("*");
+            else if ((i == 0
+                      || i == 8 - 1)
+                     && j > abs(space)
+                     && j < width - abs(space))
+                printf("*");
+            else
+                printf(" ");
+        }
+        if (space != 0
+            && i < 8 / 2) {
+            space--;
+        }
+        else if (i >= (8 / 2 + 8 / 5))
+            space--;
+        printf("\n");
     }
 }
