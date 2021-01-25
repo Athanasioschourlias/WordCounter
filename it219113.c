@@ -114,16 +114,18 @@ int main(int argc, char *argv[]) {
         close(ffd);
     }
 
+    //Parent is waiting for all of his children to finish
+    for (int i = 0; i <= files; i++) // loop will run files times how many files we counted inside the loop
+        wait(NULL);
+    closedir(folder);
+
     //printing a more visual message to the use that everything went good and the program finished
     printO();
     printf("\n");
     printK();
     printf("\n..............Im done!!!!..............");
 
-    //Parent is waiting for all of his children to finish
-    for (int i = 0; i <= files; i++) // loop will run files times how many files we counted inside the loop
-        wait(NULL);
-    closedir(folder);
+
 
 }
 
