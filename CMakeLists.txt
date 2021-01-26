@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 project(it219113 C)
 
 set(CMAKE_C_STANDARD 99)
+#telling it that it should comile with the lpthread flag in mind
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 # add the executable

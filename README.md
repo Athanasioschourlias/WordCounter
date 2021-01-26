@@ -1,10 +1,3 @@
-##Warnig!!!
-
-If you wish to compile it yourself outside the project it is important to change the variable inside the fopen() from "../output.txt" TO "./output.txt" 
-so it will generate the file at the right place since in order to run the executable with cmake you have to be inside the 
-cmake-build-debug directory.
-
-
 ## Usage
 
 To install c-make, linux
