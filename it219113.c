@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
         }
 
         if (fork() == 0) {
-
+            //creating multiple children from one parent.Every new child will have the right variable values to "play" with.
             pthread_t threads[NTHREADS];
 
             //creating a table of strucs in order to pass it as an argument at the threads function and have all the necessary information.
