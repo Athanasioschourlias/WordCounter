@@ -4,9 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/media/thanos/LinuxWinFiles/HUA/3rd Semaster/Operating systems/assigments/it219113/it219113.c" "/media/thanos/LinuxWinFiles/HUA/3rd Semaster/Operating systems/assigments/it219113/cmake-build-debug/CMakeFiles/it219113.dir/it219113.c.o"
+  "/Users/thanoschourlias/Desktop/HUA/3rd Semaster/Operating systems/assigments/2ndAssignment/it219113/it219113.c" "/Users/thanoschourlias/Desktop/HUA/3rd Semaster/Operating systems/assigments/2ndAssignment/it219113/cmake-build-debug/CMakeFiles/it219113.dir/it219113.c.o"
   )
-set(CMAKE_C_COMPILER_ID "GNU")
+set(CMAKE_C_COMPILER_ID "AppleClang")
 
 # The include file search paths:
 set(CMAKE_C_TARGET_INCLUDE_PATH

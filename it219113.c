@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 
         //Checking if a file contains a non ASCII character and if it does we skip it.
         if ((isASCII(ffd, foff)) != 0) {
-            printf("The file with name: %s and size of %ld is not an ascii file", entry->d_name, foff);
+            printf("The file with name: %s and size of %lld is not an ascii file", entry->d_name, foff);
             continue;
         }
 
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
     printO();
     printf("\n");
     printK();
-    printf("\n..............Im done!!!!..............");
+    printf("..............Im done!!!!..............\n");
 
 
 

@@ -55,19 +55,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /home/thanos/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/203.6682.181/bin/cmake/linux/bin/cmake
+CMAKE_COMMAND = "/Users/thanoschourlias/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/203.6682.181/CLion.app/Contents/bin/cmake/mac/bin/cmake"
 
 # The command to remove a file.
-RM = /home/thanos/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/203.6682.181/bin/cmake/linux/bin/cmake -E rm -f
+RM = "/Users/thanoschourlias/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/203.6682.181/CLion.app/Contents/bin/cmake/mac/bin/cmake" -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/media/thanos/LinuxWinFiles/HUA/3rd Semaster/Operating systems/assigments/it219113"
+CMAKE_SOURCE_DIR = "/Users/thanoschourlias/Desktop/HUA/3rd Semaster/Operating systems/assigments/2ndAssignment/it219113"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/media/thanos/LinuxWinFiles/HUA/3rd Semaster/Operating systems/assigments/it219113/cmake-build-debug"
+CMAKE_BINARY_DIR = "/Users/thanoschourlias/Desktop/HUA/3rd Semaster/Operating systems/assigments/2ndAssignment/it219113/cmake-build-debug"
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -94,14 +94,14 @@ clean: CMakeFiles/it219113.dir/clean
 CMakeFiles/it219113.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/it219113.dir/build.make CMakeFiles/it219113.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/it219113.dir/build.make CMakeFiles/it219113.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="/media/thanos/LinuxWinFiles/HUA/3rd Semaster/Operating systems/assigments/it219113/cmake-build-debug/CMakeFiles" --progress-num=1,2 "Built target it219113"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="/Users/thanoschourlias/Desktop/HUA/3rd Semaster/Operating systems/assigments/2ndAssignment/it219113/cmake-build-debug/CMakeFiles" --progress-num=1,2 "Built target it219113"
 .PHONY : CMakeFiles/it219113.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/it219113.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/media/thanos/LinuxWinFiles/HUA/3rd Semaster/Operating systems/assigments/it219113/cmake-build-debug/CMakeFiles" 2
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/thanoschourlias/Desktop/HUA/3rd Semaster/Operating systems/assigments/2ndAssignment/it219113/cmake-build-debug/CMakeFiles" 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/it219113.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/media/thanos/LinuxWinFiles/HUA/3rd Semaster/Operating systems/assigments/it219113/cmake-build-debug/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/thanoschourlias/Desktop/HUA/3rd Semaster/Operating systems/assigments/2ndAssignment/it219113/cmake-build-debug/CMakeFiles" 0
 .PHONY : CMakeFiles/it219113.dir/rule
 
 # Convenience name for target.
